@@ -1,0 +1,38 @@
+syntax = "proto3";
+option java_package = "org.example";
+
+service Sensors {
+  rpc getMeasure(SensorRequest) returns (SensorResponse) {}
+  rpc getMeasuresStream(SensorRequestStreamed) returns (stream SensorResponse) {}
+  rpc getSensorResponseList(stream SensorRequest) returns (SensorResponseList) {}
+  rpc getBidirectional(stream SensorRequest) returns (stream SensorResponse) {}
+}
+
+enum SensorType {
+  CPU = 0;
+  VIRTUAL_MEMORY = 1;
+  SWAP_MEMORY = 2;
+  DISK = 3;
+}
+
+message SensorRequest {
+  int32 reqId = 1;
+  SensorType sensorType = 2;
+}
+
+message SensorResponse {
+  string timestamp = 1;
+  string data = 2;
+  SensorType sensorType = 3;
+}
+
+// request type for server-side streaming - user asks for n sensor responses
+message SensorRequestStreamed {
+  int32 calls = 1;
+  SensorType sensorType = 2;
+}
+
+// response type for client-side streaming - users asks n sensor requests and gets all at once a single sensor response
+message SensorResponseList {
+  repeated SensorResponse response = 1;
+}
